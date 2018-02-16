@@ -1,0 +1,44 @@
+version: '2'
+services:
+  tick:
+    image: cyaccdocker1/taskbaseptime
+    ports:
+     - 5001:5001
+    expose:
+    - 5001
+    command: ./q/l64/q tick.q schema . -p 5001
+    volumes:
+      - logfile:/task
+  feed:
+    image: cyaccdocker1/taskbaseptime
+    ports:
+     - 5000:5000
+    expose:
+    - 5000
+    links:
+    - "tick"
+    depends_on:
+      - tick
+    command: ./q/l64/q feed.q -t 200 -p 5000 -tp tick:5001
+    volumes:
+      - logfile:/task
+  secbar:
+    image: cyaccdocker1/taskbaseptime
+    ports:
+     - 5010:5010
+    expose:
+    - 5010
+    links:
+    - "tick"
+    depends_on:
+      - tick
+    command: ./q/l64/q secbar.q -p 5010 -tp tick:5001
+    volumes:
+      - logfile:/task
+
+volumes:
+    logfile:
+
+     
+    
+    
